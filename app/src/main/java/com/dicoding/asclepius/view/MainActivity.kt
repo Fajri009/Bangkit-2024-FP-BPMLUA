@@ -1,21 +1,18 @@
 package com.dicoding.asclepius.view
 
 import android.Manifest
-import android.app.Instrumentation.ActivityResult
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.yalantis.ucrop.UCrop
 import org.tensorflow.lite.task.vision.classifier.Classifications
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.analyzeButton.visibility = View.INVISIBLE
 
         binding.galleryButton.setOnClickListener {
             startGallery()
@@ -45,9 +44,10 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
-//            UCrop
-            currentImageUri = uri
-            showImage()
+            UCrop.of(uri, Uri.fromFile(cacheDir.resolve("${System.currentTimeMillis()}.jpg")))
+                .withAspectRatio(16F, 9F)
+                .withMaxResultSize(2000, 2000)
+                .start(this)
         } else {
             showToast(getString(R.string.no_media_selected))
         }
@@ -58,10 +58,24 @@ class MainActivity : AppCompatActivity() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            val resultUri = UCrop.getOutput(data!!)
+            currentImageUri = resultUri
+            showImage()
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            showToast(cropError.toString())
+        }
+    }
+
     private fun showImage() {
         // TODO: Menampilkan gambar sesuai Gallery yang dipilih.
         currentImageUri?.let {
             binding.previewImageView.setImageURI(it)
+            binding.analyzeButton.visibility = View.VISIBLE
+            binding.galleryButton.setBackgroundColor(R.color.color_secondary)
         }
     }
 

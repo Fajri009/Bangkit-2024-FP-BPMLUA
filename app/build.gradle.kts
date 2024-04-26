@@ -57,4 +57,8 @@ dependencies {
     // TODO: Tambahkan Library TensorFlow Lite
     // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
+
+    // uCrop
+    implementation("com.github.yalantis:ucrop:2.2.8")
+    implementation("com.github.yalantis:ucrop:2.2.8-native")
 }
