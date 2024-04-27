@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.view
+package com.dicoding.asclepius.view.splash
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.asclepius.R
+import com.dicoding.asclepius.view.MainActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {

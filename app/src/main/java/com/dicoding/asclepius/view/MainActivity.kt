@@ -2,6 +2,7 @@ package com.dicoding.asclepius.view
 
 import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,9 +10,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.dicoding.asclepius.view.result.ResultActivity
 import com.yalantis.ucrop.UCrop
 import org.tensorflow.lite.task.vision.classifier.Classifications
 
@@ -20,10 +23,31 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageClassifierHelper: ImageClassifierHelper
     private var currentImageUri: Uri? = null
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                showToast("Permission request granted")
+            } else {
+                showToast("Permission request denied")
+            }
+        }
+
+    private fun allPermissionsGranted() =
+        ContextCompat.checkSelfPermission(
+            this,
+            REQUIRED_PERMISSION
+        ) == PackageManager.PERMISSION_GRANTED
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (!allPermissionsGranted()) {
+            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        }
 
         binding.analyzeButton.visibility = View.INVISIBLE
 
@@ -75,7 +99,10 @@ class MainActivity : AppCompatActivity() {
         currentImageUri?.let {
             binding.previewImageView.setImageURI(it)
             binding.analyzeButton.visibility = View.VISIBLE
-            binding.galleryButton.setBackgroundColor(R.color.color_secondary)
+            binding.galleryButton.apply {
+                text = "Replace Image"
+                setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.color_secondary))
+            }
         }
     }
 
@@ -89,14 +116,12 @@ class MainActivity : AppCompatActivity() {
                 override fun onResults(results: List<Classifications>?) {
                     binding.progressIndicator.visibility = View.INVISIBLE
 
-                    results?.joinToString {
-                        "${it.categories[0].label} : ${it.categories}%"
-                    }
                     results?.let { it ->
                         if (it.isNotEmpty() && it[0].categories.isNotEmpty()) {
                             val threshold = (it[0].categories[0].score * 100).toInt()
-                            val displayResult = "${it[0].categories[0].label}: $threshold%"
-                            moveToResult(uri, displayResult)
+                            val thresholdText = "$threshold %"
+                            val category = it[0].categories[0].label
+                            moveToResult(uri, thresholdText, category)
                         }
                     }
                 }
@@ -110,10 +135,11 @@ class MainActivity : AppCompatActivity() {
         imageClassifierHelper.classifyStaticImage(uri)
     }
 
-    private fun moveToResult(uri: Uri, result: String) {
+    private fun moveToResult(uri: Uri, resultThreshold: String, resultCategory: String) {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
-        intent.putExtra(ResultActivity.EXTRA_RESULT, result)
+        intent.putExtra(ResultActivity.EXTRA_RESULT_THRESHOLD, resultThreshold)
+        intent.putExtra(ResultActivity.EXTRA_RESULT_CATEGORY, resultCategory)
         startActivity(intent)
     }
 
