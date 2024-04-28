@@ -21,4 +21,9 @@
         <item name="fontFamily">@font/montserrat_regular</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="TextAppearance.AppCompat.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

@@ -13,7 +13,6 @@ import com.dicoding.asclepius.view.viewmodelfactory.ViewModelFactory
 class HistoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryBinding
     private lateinit var viewModel: HistoryViewModel
-    private lateinit var adapterHistory: HistoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +32,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun setAdapter(listHistory: List<HistoryEntity>) {
-        val adapter = HistoryAdapter(listHistory, this@HistoryActivity)
+        val adapter = HistoryAdapter(listHistory)
         adapter.submitList(listHistory)
         binding.rvHistory.apply {
             layoutManager = LinearLayoutManager(this@HistoryActivity)

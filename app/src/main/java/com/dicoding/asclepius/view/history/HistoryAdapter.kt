@@ -1,6 +1,5 @@
 package com.dicoding.asclepius.view.history
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -9,7 +8,7 @@ import com.dicoding.asclepius.R
 import com.dicoding.asclepius.data.local.database.HistoryEntity
 import com.dicoding.asclepius.databinding.ItemHistoryBinding
 
-class HistoryAdapter(private val listHistory: List<HistoryEntity>, private val context: Context): ListAdapter<HistoryEntity, HistoryAdapter.ViewHolder>(DIFF_CALLBACK) {
+class HistoryAdapter(private val listHistory: List<HistoryEntity>): ListAdapter<HistoryEntity, HistoryAdapter.ViewHolder>(DIFF_CALLBACK) {
     private lateinit var onItemClickCallBack: OnItemClickCallBack
 
     fun setOnItemClickCallBack(onItemClickCallBack: OnItemClickCallBack) {
@@ -24,9 +23,9 @@ class HistoryAdapter(private val listHistory: List<HistoryEntity>, private val c
                 text = items.resultCategory
                 setTextColor(
                     if (text == "Cancer") {
-                        ContextCompat.getColor(context, R.color.red)
+                        ContextCompat.getColor(itemView.context, R.color.red)
                     } else {
-                        ContextCompat.getColor(context, R.color.blue)
+                        ContextCompat.getColor(itemView.context, R.color.blue)
                     }
                 )
             }

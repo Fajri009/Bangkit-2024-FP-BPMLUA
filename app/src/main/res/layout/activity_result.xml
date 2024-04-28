@@ -72,5 +72,29 @@
             android:text="@string/category"
             android:textColor="@color/blue"
             style="@style/TextAppearance.AppCompat.TitleLarge" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginHorizontal="16dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_article"
+                app:tint="@color/color_primary" />
+
+            <TextView
+                android:id="@+id/article"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.TitleLarge"
+                android:textStyle="bold"
+                android:text="@string/article"
+                android:layout_marginStart="5dp"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
