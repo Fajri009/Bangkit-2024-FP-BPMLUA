@@ -10,7 +10,7 @@ import com.dicoding.asclepius.R
 import com.dicoding.asclepius.data.local.database.HistoryEntity
 import com.dicoding.asclepius.databinding.ActivityResultBinding
 import com.dicoding.asclepius.utils.convertMillisToDateString
-import com.dicoding.asclepius.view.viewmodelfactory.ResultViewModelFactory
+import com.dicoding.asclepius.view.viewmodelfactory.ViewModelFactory
 
 class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
@@ -24,7 +24,7 @@ class ResultActivity : AppCompatActivity() {
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val application = ResultViewModelFactory.getInstance(this@ResultActivity.application)
+        val application = ViewModelFactory.getInstance(this@ResultActivity.application)
         viewModel = ViewModelProvider(this@ResultActivity, application).get(ResultViewModel::class.java)
 
         back()
@@ -32,7 +32,10 @@ class ResultActivity : AppCompatActivity() {
         // TODO: Menampilkan hasil gambar, prediksi, dan confidence score.
         getImageUri()
         getResult()
-        setHistory()
+        val source = intent.getStringExtra(EXTRA_RESOURCE)
+        if (source == "MAIN_ACTIVITY") {
+            setHistory()
+        }
     }
 
     private fun back() {
@@ -64,14 +67,19 @@ class ResultActivity : AppCompatActivity() {
 
     private fun setHistory() {
         val date = convertMillisToDateString(System.currentTimeMillis())
-        val data = HistoryEntity(0, date, imageUri.toString(), resultThreshold!!)
+        val data = HistoryEntity(
+            date = date,
+            uri = imageUri.toString(),
+            resultThreshold = resultThreshold!!,
+            resultCategory = resultCategory!!
+        )
         viewModel.addHistory(data)
     }
 
     companion object {
+        const val EXTRA_RESOURCE = "extra_source"
         const val EXTRA_IMAGE_URI = "extra_image_uri"
         const val EXTRA_RESULT_THRESHOLD = "extra_result_threshold"
         const val EXTRA_RESULT_CATEGORY = "extra_result_category"
-        const val EXTRA_RESULT = "extra_result"
     }
 }

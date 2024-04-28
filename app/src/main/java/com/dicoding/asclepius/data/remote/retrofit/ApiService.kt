@@ -11,6 +11,8 @@ interface ApiService {
     @Headers("Authorization: token " + BuildConfig.API_KEY)
     @GET("everything")
     suspend fun getAllNews(
-        @Query("q") query: String = "cancer"
+        @Query("q") query: String = "cancer",
+        @Query("sortBy") sortBy: String = "publishedAt",
+        @Query("apiKey") apiKey: String = BuildConfig.API_KEY
     ): Call<News>
 }

@@ -3,22 +3,22 @@ package com.dicoding.asclepius.view.viewmodelfactory
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
+import com.dicoding.asclepius.view.history.HistoryViewModel
 import com.dicoding.asclepius.view.result.ResultViewModel
-import javax.xml.transform.Result
 
-class ResultViewModelFactory(private val application: Application): NewInstanceFactory() {
+class ViewModelFactory(private val application: Application): NewInstanceFactory() {
     companion object {
         @Volatile
-        private var INSTANCE: ResultViewModelFactory? = null
+        private var INSTANCE: ViewModelFactory? = null
 
         @JvmStatic
-        fun getInstance(application: Application): ResultViewModelFactory {
+        fun getInstance(application: Application): ViewModelFactory {
             if (INSTANCE == null) {
-                synchronized(ResultViewModelFactory::class.java) {
-                    INSTANCE = ResultViewModelFactory(application)
+                synchronized(ViewModelFactory::class.java) {
+                    INSTANCE = ViewModelFactory(application)
                 }
             }
-            return INSTANCE as ResultViewModelFactory
+            return INSTANCE as ViewModelFactory
         }
     }
 
@@ -26,6 +26,8 @@ class ResultViewModelFactory(private val application: Application): NewInstanceF
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ResultViewModel::class.java)) {
             return ResultViewModel(application) as T
+        } else if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
+            return HistoryViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown viewModel class: " + modelClass.name)
     }

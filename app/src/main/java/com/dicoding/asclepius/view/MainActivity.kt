@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.dicoding.asclepius.view.history.HistoryActivity
 import com.dicoding.asclepius.view.result.ResultActivity
 import com.yalantis.ucrop.UCrop
 import org.tensorflow.lite.task.vision.classifier.Classifications
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.analyzeButton.visibility = View.INVISIBLE
 
+        appBar()
+
         binding.galleryButton.setOnClickListener {
             startGallery()
         }
@@ -60,6 +63,19 @@ class MainActivity : AppCompatActivity() {
                 analyzeImage(it)
             } ?: run {
                 showToast(getString(R.string.empty_image_warning))
+            }
+        }
+    }
+
+    private fun appBar() {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu1 -> {
+                    val intent = Intent(this@MainActivity, HistoryActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
             }
         }
     }
@@ -136,10 +152,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun moveToResult(uri: Uri, resultThreshold: String, resultCategory: String) {
-        val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
-        intent.putExtra(ResultActivity.EXTRA_RESULT_THRESHOLD, resultThreshold)
-        intent.putExtra(ResultActivity.EXTRA_RESULT_CATEGORY, resultCategory)
+        val intent = Intent(this, ResultActivity::class.java).apply {
+            putExtra(ResultActivity.EXTRA_RESOURCE, "MAIN_ACTIVITY")
+            putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
+            putExtra(ResultActivity.EXTRA_RESULT_THRESHOLD, resultThreshold)
+            putExtra(ResultActivity.EXTRA_RESULT_CATEGORY, resultCategory)
+        }
         startActivity(intent)
     }
 

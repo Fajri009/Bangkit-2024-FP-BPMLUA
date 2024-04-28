@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class HistoryEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int,
+    var id: Int? = null,
 
     @ColumnInfo(name = "date")
     var date: String,
@@ -16,6 +16,9 @@ data class HistoryEntity(
     @ColumnInfo(name = "uri")
     var uri: String,
 
-    @ColumnInfo(name = "result")
-    var result: String
+    @ColumnInfo(name = "resultThreshold")
+    var resultThreshold: String,
+
+    @ColumnInfo(name = "resultCategory")
+    var resultCategory: String
 )
